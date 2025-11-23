@@ -1,25 +1,24 @@
-name: C++ Compile Check
+name: C++ Compilation Check
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]  # Adjust to your default branch if not 'main'
   pull_request:
     branches: [ main ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  compile:
+    runs-on: ubuntu-latest  # Uses a Linux environment with g++ pre-installed
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y build-essential
-
-      - name: Compile C++ code
-        run: |
-          mkdir -p build
-          g++ -Wall -Wextra -std=c++17 src/*.cpp -o build/program
+    - name: Compile C++ code
+      run: |
+        # Find all .cpp files in the repo (adjust if you have a specific structure)
+        # This assumes a simple project; for multi-file projects, use a Makefile or CMake.
+        # Example: Compile all .cpp files into an executable named 'output'
+        g++ -std=c++17 -Wall -Werror *.cpp -o output  # -Werror treats warnings as errors for strictness
+        
+        # If compilation succeeds, the step passes. If not, it fails and blocks the push/merge.
