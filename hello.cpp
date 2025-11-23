@@ -1,5 +1,5 @@
 #include <iostream>
 int main() {
-  std::cout << "Hello , GitHup Action" << std::endl;
+  std::cout << "Hello
   return 0;
 }
