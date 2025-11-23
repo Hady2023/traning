@@ -1,34 +1,47 @@
-name: C/C++ CI
+name: C/C++ Autotools CI
 
 on:
   push:
-    branches: [ main ]            # <-- change to your repo default branch (main/master)
+    branches: [ main ]      # Change "main" to your default branch
   pull_request:
     branches: [ main ]
+  workflow_dispatch:         # Allows manual run from GitHub UI
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    # 1. Checkout code
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Install build dependencies (optional)
-        run: sudo apt-get update && sudo apt-get install -y build-essential autoconf automake libtool pkg-config
+    # 2. Install all needed tools for autotools
+    - name: Install build dependencies
+      run: sudo apt-get update && sudo apt-get install -y \
+        build-essential autoconf automake libtool pkg-config
 
-      - name: Configure
-        run: ./configure
-        shell: bash
+    # 3. Generate the configure script (if it's not included in repo)
+    - name: Generate configure script
+      run: autoreconf --install
 
-      - name: Build
-        run: make -j$(nproc)
-        shell: bash
+    # 4. Run the configure script
+    - name: Configure
+      run: ./configure
+      shell: bash
 
-      - name: Run tests
-        run: make check
-        shell: bash
+    # 5. Build the project
+    - name: Build
+      run: make -j$(nproc)
+      shell: bash
 
-      - name: Distcheck (packaging verification)
-        run: make distcheck
-        shell: bash
+    # 6. Run unit tests
+    - name: Run tests
+      run: make check
+      shell: bash
+
+    # 7. Packaging verification
+    - name: Distcheck (packaging verification)
+      run: make distcheck
+      shell: bash
